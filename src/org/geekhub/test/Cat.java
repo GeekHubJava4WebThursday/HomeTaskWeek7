@@ -14,11 +14,13 @@ public class Cat {
     private String name;
     private Cat myself;
 
+    @UseDataAdapter(DateAdapter.class)
     private Date birthDate;
 
     @UseDataAdapter(ColorAdapter.class)
     private Color color;
 
+    @UseDataAdapter(CollectionAdapter.class)
     private List<Integer> whiskers = new ArrayList<>();
 
     @UseDataAdapter(MapAdapter.class)
