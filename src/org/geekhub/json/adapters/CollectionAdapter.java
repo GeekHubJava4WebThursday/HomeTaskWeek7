@@ -1,5 +1,6 @@
 package org.geekhub.json.adapters;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Collection;
@@ -9,8 +10,7 @@ import java.util.Collection;
  */
 public class CollectionAdapter implements JsonDataAdapter<Collection> {
     @Override
-    public Object toJson(Collection c) throws JSONException{
-        //implement me
-        return null;
+    public Object toJson(Collection c) throws JSONException {
+        return new JSONArray(c);
     }
 }

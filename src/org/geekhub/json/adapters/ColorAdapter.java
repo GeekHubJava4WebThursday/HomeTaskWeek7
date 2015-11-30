@@ -1,6 +1,6 @@
 package org.geekhub.json.adapters;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Converts object of type java.awt.Color to its String representation. i.e. Color.GRAY = "(128,128,128)"
