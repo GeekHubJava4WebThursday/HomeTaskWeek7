@@ -1,16 +1,12 @@
 package org.geekhub.json;
 
-import org.geekhub.json.adapters.ColorAdapter;
 import org.geekhub.json.adapters.JsonDataAdapter;
 import org.geekhub.json.adapters.UseDataAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.*;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
