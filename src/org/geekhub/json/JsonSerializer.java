@@ -1,10 +1,14 @@
 package org.geekhub.json;
 
+import org.geekhub.json.adapters.JsonDataAdapter;
+import org.geekhub.json.adapters.UseDataAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 
 /**
@@ -17,7 +21,7 @@ public class JsonSerializer {
      * simpleTypes contains java classes for which we should not make any deeper serialization and we should return object as is
      * and use toString() method to get it serialized representation
      */
-    private static Set<Class> simpleTypes = new HashSet<Class>(Arrays.asList(
+    private static Set<Class> simpleTypes = new HashSet<>(Arrays.asList(
             JSONObject.class,
             JSONArray.class,
             String.class,
@@ -51,13 +55,13 @@ public class JsonSerializer {
         }
         if (simpleTypes.contains(o.getClass())) {
             return o;
-        } else {
-            try {
-                return toJsonObject(o);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+        }
+
+        try {
+            return toJsonObject(o);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -70,7 +74,28 @@ public class JsonSerializer {
      * @throws InstantiationException
      */
     private static JSONObject toJsonObject(Object o) throws Exception {
-        //implement me
-        return null;
+        JSONObject jsonObject = new JSONObject();
+
+        Class objectClass = o.getClass();
+        Field[] fields = objectClass.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(Ignore.class)) {
+                continue;
+            }
+            if (field.isAnnotationPresent(UseDataAdapter.class)) {
+                Annotation annotation = field.getAnnotation(UseDataAdapter.class);
+                Class<JsonDataAdapter> adapter = (Class<JsonDataAdapter>) ((UseDataAdapter) annotation).value();
+
+                Method method = adapter.getMethod("toJson", Object.class);
+                Object object = method.invoke(adapter.newInstance(), field.get(o));
+
+                jsonObject.put(field.getName(), object);
+            } else {
+                jsonObject.put(field.getName(), field.get(o));
+            }
+        }
+
+        return jsonObject;
     }
 }
