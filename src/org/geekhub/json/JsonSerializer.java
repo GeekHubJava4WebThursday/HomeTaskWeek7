@@ -1,10 +1,16 @@
 package org.geekhub.json;
 
+import org.geekhub.json.adapters.JsonDataAdapter;
+import org.geekhub.json.adapters.UseDataAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 
 /**
@@ -70,7 +76,26 @@ public class JsonSerializer {
      * @throws InstantiationException
      */
     private static JSONObject toJsonObject(Object o) throws Exception {
-        //implement me
-        return null;
+        JSONObject jsonObject = new JSONObject();
+
+        Class objectClass = o.getClass();
+        Field[] fields = objectClass.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (objectClass.isAnnotationPresent(Ignore.class)) {
+                continue;
+            }
+            if (objectClass.isAnnotationPresent(UseDataAdapter.class)) {
+                Class adapterClass =
+                        ((UseDataAdapter) objectClass.getAnnotation(UseDataAdapter.class)).value().getClass();
+                Method[] methods = adapterClass.getMethods();
+                Object object = methods[0].invoke(field.getType());
+                jsonObject.put(field.getName(), object);
+            } else {
+                jsonObject.put(field.getName(), field.get(o));
+            }
+        }
+
+        return jsonObject;
     }
 }
