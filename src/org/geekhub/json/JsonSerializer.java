@@ -1,10 +1,12 @@
 package org.geekhub.json;
 
+import org.geekhub.json.adapters.ColorAdapter;
 import org.geekhub.json.adapters.JsonDataAdapter;
 import org.geekhub.json.adapters.UseDataAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -62,7 +64,7 @@ public class JsonSerializer {
         try {
             return toJsonObject(o);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -82,14 +84,16 @@ public class JsonSerializer {
         Field[] fields = objectClass.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
-            if (objectClass.isAnnotationPresent(Ignore.class)) {
+            if (field.isAnnotationPresent(Ignore.class)) {
                 continue;
             }
-            if (objectClass.isAnnotationPresent(UseDataAdapter.class)) {
-                Class adapterClass =
-                        ((UseDataAdapter) objectClass.getAnnotation(UseDataAdapter.class)).value().getClass();
-                Method[] methods = adapterClass.getMethods();
-                Object object = methods[0].invoke(field.getType());
+            if (field.isAnnotationPresent(UseDataAdapter.class)) {
+                Annotation annotation = field.getAnnotation(UseDataAdapter.class);
+                Class<JsonDataAdapter> adapter = (Class<JsonDataAdapter>) ((UseDataAdapter) annotation).value();
+
+                Method method = adapter.getMethod("toJson", Object.class);
+                Object object = method.invoke(adapter.newInstance(), field.get(o));
+
                 jsonObject.put(field.getName(), object);
             } else {
                 jsonObject.put(field.getName(), field.get(o));
