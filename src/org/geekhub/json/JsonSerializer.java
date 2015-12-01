@@ -76,21 +76,15 @@ public class JsonSerializer {
 
         JSONObject jsonObject = new JSONObject();
 
-        Class<?> oClass = o.getClass();
-
-        Field[] declaredFields = oClass.getDeclaredFields();
+        Field[] declaredFields = o.getClass().getDeclaredFields();
         for (Field field : declaredFields) {
             field.setAccessible(true);
-            if (field.getAnnotation(Ignore.class) == null) {
-                if (simpleTypes.contains(field.getClass())) {
-                    jsonObject.put(field.getName(), field.get(o).toString());
-                } else {
+            if (!field.isAnnotationPresent(Ignore.class)) {
+                if (field.isAnnotationPresent(UseDataAdapter.class)) {
                     UseDataAdapter annotation = field.getAnnotation(UseDataAdapter.class);
-                    if (annotation != null) {
-                        jsonObject.put(field.getName(), serialize(annotation.value().newInstance().toJson(field.get(o))));
-                    } else {
-                        jsonObject.put(field.getName(), serialize(JSONObject.valueToString(field.get(o))));
-                    }
+                    jsonObject.put(field.getName(), serialize(annotation.value().newInstance().toJson(field.get(o))));
+                } else {
+                    jsonObject.put(field.getName(), serialize(JSONObject.valueToString(field.get(o))));
                 }
             }
         }
