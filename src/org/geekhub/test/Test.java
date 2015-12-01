@@ -3,7 +3,7 @@ package org.geekhub.test;
 import org.geekhub.json.JsonSerializer;
 
 import java.awt.*;
-import java.util.*;
+import java.util.Date;
 import java.util.List;
 
 public class Test {
