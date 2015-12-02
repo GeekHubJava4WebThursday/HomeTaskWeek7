@@ -11,7 +11,7 @@ public class Test {
         Cat cat = new Cat();
         cat.setColor(Color.GRAY);
         cat.setAge(4);
-        cat.setName("Tom");
+        cat.setName("Тюбик");
 
         List<Integer> whiskers = cat.getWhiskers();
         whiskers.add(1);
