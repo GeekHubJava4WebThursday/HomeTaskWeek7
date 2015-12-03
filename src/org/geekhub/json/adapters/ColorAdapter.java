@@ -8,6 +8,9 @@ import java.awt.Color;
 public class ColorAdapter implements JsonDataAdapter<Color> {
     @Override
     public Object toJson(Color o) {
+        if (o == null) {
+            return null;
+        }
         return "(" + o.getRed() + "," + o.getGreen() + "," + o.getBlue() + ")";
     }
 }

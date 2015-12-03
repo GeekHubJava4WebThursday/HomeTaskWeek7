@@ -1,5 +1,7 @@
 package org.geekhub.json.adapters;
 
+import org.geekhub.json.JsonSerializer;
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Collection;
@@ -10,7 +12,10 @@ import java.util.Collection;
 public class CollectionAdapter implements JsonDataAdapter<Collection> {
     @Override
     public Object toJson(Collection c) throws JSONException{
-        //implement me
-        return null;
+        JSONArray array = new JSONArray();
+        for (Object o: c) {
+            array.put(JsonSerializer.serialize(o));
+        }
+        return array;
     }
 }
