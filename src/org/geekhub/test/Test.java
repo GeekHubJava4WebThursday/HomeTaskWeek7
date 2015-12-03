@@ -1,6 +1,7 @@
 package org.geekhub.test;
 
 import org.geekhub.json.JsonSerializer;
+import org.geekhub.json.adapters.CollectionAdapter;
 
 import java.awt.*;
 import java.util.*;

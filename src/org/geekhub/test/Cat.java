@@ -1,10 +1,9 @@
 package org.geekhub.test;
 
+import org.geekhub.json.Ignore;
 import org.geekhub.json.adapters.*;
-
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Simple Cat that will be used for testing JSON serialization.
@@ -12,14 +11,19 @@ import java.util.List;
 public class Cat {
     private int age;
     private String name;
+
+    @Ignore
     private Cat myself;
 
+    @UseDataAdapter(DateAdapter.class)
     private Date birthDate;
 
     @UseDataAdapter(ColorAdapter.class)
     private Color color;
 
-    private List<Integer> whiskers = new ArrayList<>();
+
+    @UseDataAdapter(CollectionAdapter.class)
+    private java.util.List<Integer> whiskers = new ArrayList<>();
 
     @UseDataAdapter(MapAdapter.class)
     private Map<String, Paw> paws = new HashMap<>();
@@ -68,11 +72,11 @@ public class Cat {
         this.paws = paws;
     }
 
-    public List<Integer> getWhiskers() {
+    public java.util.List<Integer> getWhiskers() {
         return whiskers;
     }
 
-    public void setWhiskers(List<Integer> whiskers) {
+    public void setWhiskers(java.util.List<Integer> whiskers) {
         this.whiskers = whiskers;
     }
 
