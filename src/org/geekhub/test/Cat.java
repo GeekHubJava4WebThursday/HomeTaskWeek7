@@ -1,5 +1,6 @@
 package org.geekhub.test;
 
+import org.geekhub.json.Ignore;
 import org.geekhub.json.adapters.*;
 
 import java.awt.*;
@@ -12,13 +13,17 @@ import java.util.List;
 public class Cat {
     private int age;
     private String name;
+
+    @Ignore
     private Cat myself;
 
+    @UseDataAdapter(DateAdapter.class)
     private Date birthDate;
 
     @UseDataAdapter(ColorAdapter.class)
     private Color color;
 
+    @UseDataAdapter(CollectionAdapter.class)
     private List<Integer> whiskers = new ArrayList<>();
 
     @UseDataAdapter(MapAdapter.class)
