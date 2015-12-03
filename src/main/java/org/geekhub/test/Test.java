@@ -3,11 +3,11 @@ package org.geekhub.test;
 import org.geekhub.json.JsonSerializer;
 
 import java.awt.*;
-import java.util.*;
+import java.util.Date;
 import java.util.List;
 
 public class Test {
-    public static void main(String[] args) throws IllegalAccessException {
+    public static void main(String[] args) {
         Cat cat = new Cat();
         cat.setColor(Color.GRAY);
         cat.setAge(4);

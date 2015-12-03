@@ -1,10 +1,14 @@
 package org.geekhub.json;
 
+import org.geekhub.json.adapters.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.awt.*;
+import java.util.*;
+
+import java.lang.reflect.Field;
 
 
 /**
@@ -70,7 +74,38 @@ public class JsonSerializer {
      * @throws InstantiationException
      */
     private static JSONObject toJsonObject(Object o) throws Exception {
-        //implement me
-        return null;
+        JSONObject jsonObject = new JSONObject();
+
+        Class argClass = o.getClass();
+        Field fields[] = argClass.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(Ignore.class) || field.isSynthetic()) {
+                continue;
+            }
+
+            String fieldName = field.getName();
+            Class<?> fieldType = field.getType();
+            Object fieldValue = field.get(o);
+
+            UseDataAdapter dataAdapter = field.getAnnotation(UseDataAdapter.class);
+            if (dataAdapter != null) {
+                Class adapterClass = (Class) dataAdapter.value();
+                jsonObject.put(fieldName, ((JsonDataAdapter) adapterClass.newInstance()).toJson(fieldValue));
+            }
+
+            if (Collection.class.isAssignableFrom(fieldType)) {
+                jsonObject.put(fieldName, new CollectionAdapter().toJson((Collection) fieldValue));
+            } else if (Map.class.isAssignableFrom(fieldType)) {
+                jsonObject.put(fieldName, new MapAdapter().toJson((Map) fieldValue));
+            } else if (fieldType.equals(Date.class)) {
+                jsonObject.put(fieldName, new DateAdapter().toJson((Date) fieldValue));
+            } else if (fieldType.equals(Color.class)) {
+                jsonObject.put(fieldName, new ColorAdapter().toJson((Color) fieldValue));
+            } else {
+                jsonObject.put(fieldName, JsonSerializer.serialize(fieldValue));
+            }
+        }
+        return jsonObject;
     }
 }
