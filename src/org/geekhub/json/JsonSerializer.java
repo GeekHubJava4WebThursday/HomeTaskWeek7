@@ -1,7 +1,11 @@
 package org.geekhub.json;
 
+import org.geekhub.json.adapters.JsonDataAdapter;
+import org.geekhub.json.adapters.UseDataAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -68,9 +72,31 @@ public class JsonSerializer {
      * @return JSON object.
      * @throws IllegalAccessException
      * @throws InstantiationException
+     * @throws SecurityException
      */
     private static JSONObject toJsonObject(Object o) throws Exception {
-        //implement me
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        Class clazz = o.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+
+        // iterate all fields and process them
+        for (Field field: fields) {
+
+            // check if field must be ignored
+            if (field.isAnnotationPresent(Ignore.class)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            Object value = field.get(o);
+
+            if (field.isAnnotationPresent(UseDataAdapter.class)) {
+                UseDataAdapter annotation = field.getAnnotation(UseDataAdapter.class);
+                JsonDataAdapter adapter = annotation.value().newInstance();
+                value = serialize(adapter.toJson(value));
+            }
+            jsonObject.put(field.getName(), value);
+        }
+        return jsonObject;
     }
 }
