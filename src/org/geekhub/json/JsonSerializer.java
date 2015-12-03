@@ -1,12 +1,14 @@
 package org.geekhub.json;
 
-import org.geekhub.json.adapters.*;
+import org.geekhub.json.adapters.JsonDataAdapter;
+import org.geekhub.json.adapters.UseDataAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.*;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -85,34 +87,15 @@ public class JsonSerializer {
                 continue;
             }
 
-            // get field name and value
-            String name = null;
-            Object value = null;
-            try {
-                field.setAccessible(true);
-                name = field.getName();
-                value = field.get(o);
-            } catch (SecurityException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            field.setAccessible(true);
+            Object value = field.get(o);
 
             if (field.isAnnotationPresent(UseDataAdapter.class)) {
                 UseDataAdapter annotation = field.getAnnotation(UseDataAdapter.class);
-                if (annotation.value().equals(ColorAdapter.class)) {
-                    jsonObject.put(name, serialize((new ColorAdapter()).toJson((Color) value)));
-                }
-                if (annotation.value().equals(DateAdapter.class)) {
-                    jsonObject.put(name, serialize((new DateAdapter()).toJson((Date) value)));
-                }
-                if (annotation.value().equals(MapAdapter.class)) {
-                    jsonObject.put(name, serialize((new MapAdapter()).toJson((Map) value)));
-                }
-                if (annotation.value().equals(CollectionAdapter.class)) {
-                    jsonObject.put(name, serialize((new CollectionAdapter()).toJson((Collection) value)));
-                }
-            } else {
-                jsonObject.put(name, serialize(value));
+                JsonDataAdapter adapter = annotation.value().newInstance();
+                value = serialize(adapter.toJson(value));
             }
+            jsonObject.put(field.getName(), value);
         }
         return jsonObject;
     }
