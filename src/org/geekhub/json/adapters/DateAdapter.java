@@ -1,5 +1,6 @@
 package org.geekhub.json.adapters;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -8,7 +9,6 @@ import java.util.Date;
 public class DateAdapter implements JsonDataAdapter<Date> {
     @Override
     public Object toJson(Date date) {
-        //implement me
-        return null;
+        return new SimpleDateFormat("dd.MM.yyyy").format(date);
     }
 }

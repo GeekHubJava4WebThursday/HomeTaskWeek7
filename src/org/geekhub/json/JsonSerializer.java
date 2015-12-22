@@ -17,7 +17,7 @@ public class JsonSerializer {
      * simpleTypes contains java classes for which we should not make any deeper serialization and we should return object as is
      * and use toString() method to get it serialized representation
      */
-    private static Set<Class> simpleTypes = new HashSet<Class>(Arrays.asList(
+    private static Set<Class> simpleTypes = new HashSet<>(Arrays.asList(
             JSONObject.class,
             JSONArray.class,
             String.class,

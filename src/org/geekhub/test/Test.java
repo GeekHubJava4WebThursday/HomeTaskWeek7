@@ -3,6 +3,7 @@ package org.geekhub.test;
 import org.geekhub.json.JsonSerializer;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
