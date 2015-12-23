@@ -1,13 +1,18 @@
 package org.geekhub.test;
 
+import org.geekhub.json.Ignore;
 import org.geekhub.json.JsonSerializer;
+import org.geekhub.json.adapters.ColorAdapter;
+import org.geekhub.json.adapters.UseDataAdapter;
 
 import java.awt.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;
 
 public class Test {
-    public static void main(String[] args) throws IllegalAccessException {
+    public static void main(String[] args) throws IllegalAccessException, NoSuchFieldException {
         Cat cat = new Cat();
         cat.setColor(Color.GRAY);
         cat.setAge(4);
@@ -28,5 +33,15 @@ public class Test {
         cat.getPaws().put("back-right", new Paw(22, Color.GRAY));
 
         System.out.println(JsonSerializer.serialize(cat));
+
+//        Field[] fields = Cat.class.getDeclaredFields();
+//        for (Field f : fields) {
+//            f.setAccessible(true);
+//            System.out.println(f.getName() + " : ");
+//            Annotation[] annotations = f.getDeclaredAnnotations();
+//            for (Annotation a : annotations) {
+//                System.out.println("\t" + a.annotationType().getName());
+//            }
+//        }
     }
 }
