@@ -89,6 +89,8 @@ public class JsonSerializer {
                 Method method = adapter.getMethod("toJson", Object.class);
                 Object obj = method.invoke(adapter.newInstance(), f.get(o));
                 jsonObject.put(f.getName(), obj);
+            } else if (!f.isAnnotationPresent(Ignore.class)) {
+                jsonObject.put(f.getName(), f.get(o));
             }
         }
         return jsonObject;
