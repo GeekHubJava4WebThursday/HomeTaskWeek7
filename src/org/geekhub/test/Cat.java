@@ -1,8 +1,10 @@
 package org.geekhub.test;
 
+import org.geekhub.json.Ignore;
 import org.geekhub.json.adapters.*;
 
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
 public class Cat {
     private int age;
     private String name;
+
+    @Ignore
     private Cat myself;
 
     @UseDataAdapter(DateAdapter.class)

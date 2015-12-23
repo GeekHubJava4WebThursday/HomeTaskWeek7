@@ -13,9 +13,7 @@ public class CollectionAdapter implements JsonDataAdapter<Collection> {
     @Override
     public Object toJson(Collection c) throws JSONException {
         JSONArray array = new JSONArray();
-        for (Object o : c) {
-            array.put(JsonSerializer.serialize(o));
-        }
+        c.forEach(array::put);
         return array;
     }
 }
